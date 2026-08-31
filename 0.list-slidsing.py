@@ -35,14 +35,3 @@ nums = list(range(0,100,5))
 print(nums)
 print(len(nums))
 print()
-
-
-
-"""
-
-
-print(nums)
-print(nums)
-print(nums)
-print(nums)
-"""
