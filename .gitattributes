@@ -1,0 +1,10 @@
+# Normalize line endings across macOS and Windows.
+# Git stores LF in the repo and checks out the platform's native ending.
+# Prevents "whole file changed" diffs when switching machines.
+* text=auto
+
+# Binary files: never touch line endings.
+*.png binary
+*.jpg binary
+*.pdf binary
+*.zip binary

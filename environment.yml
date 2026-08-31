@@ -1,0 +1,21 @@
+# Recipe for the BTS4210 conda environment.
+# Rebuild with:  conda env create -f environment.yml
+#
+# Deliberately unpinned except for Python: no build strings, no platform
+# lock-in, so this also solves on Windows. Do not replace this with
+# `conda env export` (it pins osx-arm64 builds); use `--from-history` if
+# an export is ever needed.
+name: bts4210
+channels:
+  - defaults
+dependencies:
+  - python=3.13
+  - numpy
+  - pandas
+  - matplotlib
+  - scipy
+  - scikit-learn
+  - seaborn
+  - statsmodels
+  - spyder
+  - jupyterlab
