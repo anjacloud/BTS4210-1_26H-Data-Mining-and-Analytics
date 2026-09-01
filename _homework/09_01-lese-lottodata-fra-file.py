@@ -8,8 +8,8 @@ Created on Mon Aug 31 14:43:53 2026
 
 import numpy as np
 
-
-file = open("/Users/mine/Documents/Master_USN_Repo/BTS4210-1_26H-Data-Mining-and-Analytics/_homework/0.Lottotall.txt", "r")
+"""
+file = open("/Users/mine/Documents/Master_USN_Repo/BTS4210-1_26H-Data-Mining-and-Analytics/_homework/09_01-Lottotall.txt", "r")
 
 content = file.read()
 #print(content)
@@ -22,12 +22,12 @@ print(" type :", type(content).__name__)
 file.close()
 
 
-"""
+
 this under is with help from Claude
 """
 
 
-STI = "/Users/mine/Documents/Master_USN_Repo/BTS4210-1_26H-Data-Mining-and-Analytics/_homework/0.Lottotall.txt"
+STI = "09_01-Lottotall.txt"
 
 print("=" * 60)
 print("STEG 1 - les fila.  Du har dette fra for.")

@@ -19,3 +19,4 @@ dependencies:
   - statsmodels
   - spyder
   - jupyterlab
+  - openpyxl

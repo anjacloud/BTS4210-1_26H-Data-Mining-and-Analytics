@@ -216,3 +216,20 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# Windows 
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Genererte filer fra oppgavene
+_homework/plot_klima.png
+_homework/datafil_temp.csv
+_homework/kanon_2026.txt
