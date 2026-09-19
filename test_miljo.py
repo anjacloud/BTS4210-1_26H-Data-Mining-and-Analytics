@@ -1,9 +1,13 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Created on Mon Aug 31 12:05:52 2026
+Miljøsjekk — er alt installert i bts4210
 
-@author: mine
+Opphav   : min egen
+Status   : verktøy, ikke en oppgave
+
+Created on Mon Aug 31 12:05:52 2026   (Spyder-stempel. @author er fjernet — det sto "mine"
+                             på alle filer, også dem som er LEOs)
 """
 
 import numpy as np

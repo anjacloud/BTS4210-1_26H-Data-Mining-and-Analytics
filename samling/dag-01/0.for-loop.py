@@ -1,9 +1,13 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Created on Mon Aug 31 12:28:59 2026
+for loop — samling 1, dag 1
 
-@author: mine
+Opphav   : avskrift i timen
+Status   : skrevet av mens LEO kodet foran klassen
+
+Created on Mon Aug 31 12:28:59 2026   (Spyder-stempel. @author er fjernet — det sto "mine"
+                             på alle filer, også dem som er LEOs)
 """
 
 """

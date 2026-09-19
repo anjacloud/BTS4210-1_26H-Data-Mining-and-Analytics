@@ -1,9 +1,15 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Created on Mon Aug 31 14:43:53 2026
+9.1 — Lese lottotall fra fil
 
-@author: mine
+Opphav   : min egen
+Status   : LØST. Svar: tallet 2 er med 13 ganger
+Data     : 09_01-Lottotall.txt, i samme mappe
+Notat    : Master_brain/…/BTS4210-…/02_assignments/Forkurs-python-numpy/09.01-lese-lottotall-fra-fil.md
+
+Created on Mon Aug 31 14:43:53 2026   (Spyder-stempel. @author er fjernet — det sto "mine"
+                             på alle filer, også dem som er LEOs)
 """
 
 import numpy as np

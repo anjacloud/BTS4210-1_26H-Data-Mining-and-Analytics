@@ -229,7 +229,13 @@ Thumbs.db
 ehthumbs.db
 Desktop.ini
 
-# Genererte filer fra oppgavene
-_homework/plot_klima.png
-_homework/datafil_temp.csv
-_homework/kanon_2026.txt
+# Genererte utdata fra oppgavene. Uten katalogprefiks, saa de fanges uansett
+# hvilken mappe skriptet kjoeres fra — de tre sto som faste stier under
+# _homework/ og sluttet aa virke da mappene ble lagt om 2026-09-15.
+plot_klima.png
+datafil_temp.csv
+kanon_2026.txt
+kannon_2026.txt
+plott_*.pdf
+temperatur.txt
+solhoyde.txt

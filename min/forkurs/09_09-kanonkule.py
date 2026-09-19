@@ -1,9 +1,19 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Created on Tue Sep  1 10:49:42 2026
+9.9 — Kanonkule
 
-@author: mine
+Opphav   : BLANDET — LEOs løsning. Min egen er ikke skrevet (tom plassholder nederst)
+Status   : IKKE LØST AV MEG
+Original : ../../laerer/forkurs/oppg9_9._2026V2py.py
+Endret   : utdatafila heter kanon_2026.txt her, kannon_2026.txt hos LEO.
+         plt.grid(), plt.show() og den utkommenterte savefig er fjernet
+Merk     : høyden ved t=15 s leses med Ykomp[68], en hardkodet indeks. Den
+         gjelder bare så lenge np.linspace(0, 22, 100) står uendret
+Notat    : Master_brain/…/BTS4210-…/02_assignments/Forkurs-python-numpy/09.09-kanonkule.md
+
+Created on Tue Sep  1 10:49:42 2026   (Spyder-stempel. @author er fjernet — det sto "mine"
+                             på alle filer, også dem som er LEOs)
 """
 
 """

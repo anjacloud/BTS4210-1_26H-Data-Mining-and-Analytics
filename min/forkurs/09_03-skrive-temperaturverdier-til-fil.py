@@ -1,9 +1,18 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Created on Tue Sep  1 09:40:46 2026
+9.3 — Skrive temperaturverdier til fil
 
-@author: mine
+Opphav   : BLANDET — mitt utkast øverst (utkommentert), LEOs løsning nederst
+Status   : IKKE LØST AV MEG. Utkastet stopper på en parentesfeil i np.savetxt:
+         alle argumentene er pakket i én tuppel, som gir SyntaxError
+Original : ../../laerer/forkurs/oppg9_3_2026.py — identisk, bortsett fra to mellomrom
+Merk     : LEOs kode skriver datafil_temp.csv (kolonseparert), ikke temperatur.txt
+         som oppgaven ber om og som 9.4 skal lese
+Notat    : Master_brain/…/BTS4210-…/02_assignments/Forkurs-python-numpy/09.03-skrive-temperaturverdier-til-fil.md
+
+Created on Tue Sep  1 09:40:46 2026   (Spyder-stempel. @author er fjernet — det sto "mine"
+                             på alle filer, også dem som er LEOs)
 """
 """
 import numpy as np
