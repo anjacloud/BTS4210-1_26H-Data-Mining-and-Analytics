@@ -1,13 +1,11 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Created on Sun Sep 20 13:19:59 2026
+1. Used cars
 
 @author: oblig0_289412
 
-spørsmål: 
-* hvorfor taket er satt til 1 000 000, og hva som er meningen at man skal gjøre med de 3 918 bilene som faller utenfor
-* om Year-kolonnen er kjent skitten, og om man forventes å rydde i den eller bare oppdage den
+
 """
 
 from pathlib import Path
