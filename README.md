@@ -14,25 +14,48 @@ egne filer uten at noe sa fra. Da leste repoet som om jeg hadde løst dem.
 |---|---|---|
 | `min/forkurs/` | **meg** | Kapittel 9 hos Haugen — numpy og filer, oppgave 9.1–9.10 |
 | `min/forkurs-pandas/` | **meg** | Kapittel 10 hos Haugen — Pandas, oppgave 10.1–10.8 |
-| `min/oblig-00/` | **meg** | Oblig#0. `data/` er utdelt, koden blir min |
-| `samling/` | meg, etter LEOs skjerm | Skrevet av i timen mens han kodet foran klassen |
-| `laerer/` | Lars Erik Opdal (LEO) | Utdelte filer og løsninger, urørt |
+| `min/oblig0_289412/` | **meg** | Oblig#0, innleveringsmappa. `data/` er utdelt, koden er min |
+| `min/Øvelse_1_statistikk/` | **meg** | Øvelse 1, samling 2. Løst som fem `.py` framfor i notebooken; `Data/tips.csv` er kopi av den utdelte, samme `shasum` |
+| `min/samling/` | meg, etter forelesers skjerm | Skrevet av i timen mens foreleser kodet foran klassen |
+| `laerer/` | LEO og Singstad, se regelen nedenfor | Utdelte filer og løsninger, urørt |
+| `laerer/samling-02/` | Bjørn-Jostein Singstad (`Bsingstad`) | Statistikk-notebooks og data, samling 2, urørt |
 
-Skillet mellom `min/` og `samling/` er ikke pedantisk. Å taste av en skjerm er ikke det
-samme som å løse noe selv, men det er heller ikke en utdelt fil — og begge deler er verdt å
-ha. En tredje bøtte var billigere enn å tvinge sju filer inn et sted de ikke hørte hjemme.
+Skillet mellom egen løsning og avskrift er ikke pedantisk. Å taste av en skjerm er ikke det
+samme som å løse noe selv, men det er heller ikke en utdelt fil. Fram til 28. september lå
+`samling/` derfor som en tredje bøtte ved siden av `min/` og `laerer/`.
 
-**Regelen for `laerer/`:** filene der er slik de ble delt ut. Endrer jeg noe, skal det stå
-som en kommentar i fila. Samme regel som i BTS4410-repoet.
+Nå ligger den under `min/`, og mappegrensen svarer bare på ett spørsmål: ble fila delt ut,
+eller ikke. Nyansen er ikke tapt — alle sju filene i `min/samling/` har
+`Opphav : avskrift i timen` i headeren. Den leses nå per fil i stedet for per mappe.
+
+**Regelen for `laerer/`:** filene der er slik de ble delt ut, uansett hvem som delte dem ut.
+`forkurs/`, `data/` og `samling-01/` er LEOs; `samling-02/` er Singstads. Endrer jeg noe, skal
+det stå som en kommentar i fila. Samme regel som i BTS4410-repoet.
+
+Notebookene i `samling-02/` har **ingen `Opphav:`-header**, i motsetning til `.py`-filene i
+`samling-01/`. Det er et bevisst avvik: en header i en `.ipynb` betyr en ny markdown-celle,
+altså en endring av fila. Lar jeg dem være byte-identiske med GitHub, kan opphavet *bevises*
+i stedet for å påstås:
+
+```
+BASE=https://raw.githubusercontent.com/Bsingstad/BTS4210-H-ST2026/main/Samling_2_dag_1
+curl -sf "$BASE/kode/02_utvalg.ipynb" | shasum
+shasum laerer/samling-02/kode/02_utvalg.ipynb
+```
+
+Samme sum = urørt. Filene er lastet ned enkeltvis med `curl` 2026-09-28, ikke klonet — en
+klone la sin egen `.git` inni dette repoet og gjorde at mine egne filer lå usporet i en repo
+jeg ikke eide.
 
 ## Headeren sier det samme
 
 Mappa svarer på hvem som eier koden. Headeren svarer på hva *denne* fila er:
 
 ```
-Opphav   : min egen | avskrift i timen | LEO (Lars Erik Opdal), urørt | BLANDET
+Opphav   : min egen | avskrift i timen | <foreleser>, urørt | BLANDET
+           <foreleser> er LEO (Lars Erik Opdal) eller Singstad (Bjørn-Jostein Singstad)
 Status   : hva som faktisk er gjort
-Original : sti til LEOs fil, når min er en kopi eller en variant
+Original : sti til forelesers fil, når min er en kopi eller en variant
 ```
 
 `@author`-feltet fra Spyder er fjernet. Det sto `mine` på **alle** filer her, også de to som
@@ -84,7 +107,8 @@ conda env create -f environment.yml
 conda activate bts4210
 ```
 
-`bts4210` har pandas, numpy, matplotlib, scikit-learn, openpyxl og JupyterLab. Start
+`bts4210` har pandas, numpy, matplotlib, scipy, scikit-learn, seaborn, statsmodels,
+openpyxl, Spyder og JupyterLab — lista står i `environment.yml`, som er kilden. Start
 JupyterLab fra selve miljøet — base har ingen kernel registrert for `bts4210`:
 
 ```
@@ -93,8 +117,15 @@ JupyterLab fra selve miljøet — base har ingen kernel registrert for `bts4210`
 
 Skriptene leser og skriver i arbeidskatalogen, så **kjør dem fra sin egen mappe**.
 
-Datafilene til Oblig#0 ligger i `min/oblig-00/data/` — 16 MB, committet med vilje så ZIP-en
-til innlevering kan bygges på nytt og dataene overlever at Canvas-lenka forsvinner.
+Notebookene i `laerer/samling-02/` er ett unntak verdt å kjenne: de leser
+`pd.read_csv("../Data/penguins.csv")`, altså **ett nivå opp**. Derfor må `Data/`, `kode/` og
+`øvinger/` ligge side om side slik de gjør — flytter jeg en notebook, slutter den å finne
+dataene. Lager jeg egen kode under `min/samling/dag-03/`, kan den lese de samme filene på
+tvers med `../../../laerer/samling-02/Data/` — **tre** nivåer opp, ikke to, etter at
+`samling/` flyttet inn under `min/` 28. september — i stedet for at csv-ene ligger to steder.
+
+Datafilene til Oblig#0 ligger i `min/oblig0_289412/data/` — 16 MB, committet med vilje så
+ZIP-en til innlevering kan bygges på nytt og dataene overlever at Canvas-lenka forsvinner.
 Skilletegnene er blandet: `nor_population2022.csv` er semikolonseparert og trenger
 `sep=";"`, resten er komma. `laerer/data/nor_population2024.csv` er **ikke** en del av
 oppgaven — den er nyere data med annen struktur (`år` mot `ar`, og Østfold mot Viken etter
