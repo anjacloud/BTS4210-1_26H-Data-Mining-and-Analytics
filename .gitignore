@@ -239,3 +239,13 @@ kannon_2026.txt
 plott_*.pdf
 temperatur.txt
 solhoyde.txt
+
+# Office-laasefiler. Word og PowerPoint lager en ~$-fil ved siden av dokumentet
+# mens det staar aapent, og den blir liggende hvis programmet krasjer.
+# Singstads repo hadde en slik ved siden av forelesningen 2026-09-28.
+~$*
+
+# Slides og prosa hoerer i vaulten, ikke i kode-repoet. Uten denne regelen blir
+# en .pptx committet stille hvis den kopieres inn ved et uhell.
+# Vaulten: ~/Documents/Master_brain/03_courses/2026-H/BTS4210-1_26H-…/
+*.pptx
