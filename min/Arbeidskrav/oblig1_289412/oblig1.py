@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-
+Jeg diskuterte en del med en AI-model hvordan man løser denne oppgaven på best mulig måte 
+uten å miste hode og for å lærer mer hvordan en funksjon bare skal ha en oppgave
 
 @author: 
     studentnummer: 289412
@@ -14,6 +15,14 @@ import matplotlib.pyplot as plt
 import numpy as np
 from sklearn.metrics import accuracy_score
 from scipy import stats
+from sklearn.model_selection import GroupShuffleSplit
+from sklearn.compose import ColumnTransformer
+from sklearn.pipeline import Pipeline
+from sklearn.preprocessing import StandardScaler, OneHotEncoder
+from sklearn.impute import SimpleImputer
+from sklearn.linear_model import LinearRegression
+from sklearn.dummy import DummyRegressor
+from sklearn.metrics import r2_score, mean_absolute_error
 
 
 
@@ -202,21 +211,98 @@ def welch_test(ja, nei):
     t, p = stats.ttest_ind(ja, nei, equal_var=False)
     return t, p
 
-# Cohens d - samme formelen som i undervisningenmateriale
+# Cohens d - samme formel som i undervisningenmaterialet
 def cohens_d(a, b):
     n_a, n_b = len(a), len(b)
     s_pooled = np.sqrt(((n_a - 1) * a.var() + (n_b - 1) * b.var()) / (n_a + n_b - 2))
     return (b.mean() - a.mean()) / s_pooled
 
+""" DEL 3 """
+
+TARGET = "qt_interval"
+
+# kolonner som ikke skal være input i regresjonen
+DROP_COLS = [
+    # ID-er: sier ingenting om EKG-et, brukes bare til gruppering
+    "pasient_id", "opphold_id",
+    # regnes ut fra qt_interval selv -> lekkasje (modellen ville «sett svaret»)
+    "qtc_interval", "has_prolonged_qt",
+    # utfall som skjer etter EKG-et -> finnes ikke når QT skal predikeres
+    "ami_3d", "maxtrop_sameday", "stent_or_cabg_010_day", "macetrop_pos_or_death_030",]
+
+# rydder data for regresjon: fjerner rader uten target, deler i X, y og grupper
+def prepare_regression(df, target=TARGET, drop_cols=DROP_COLS):
+    check_column(df, target)
+    # fjern bare rader der target mangler 
+    data = df.dropna(subset=[target])
+    print(f"Rader etter fjerning av manglende {target}: {len(data)} av {len(df)}")
+    # y = det vi vil predikere, X = alt annet unntatt kolonnene over
+    y = data[target]
+    X = data.drop(columns=[target] + drop_cols)
+    # grupper = pasient_id, brukes i splitten slik at samme pasient ikke havner begge steder
+    groups = data["pasient_id"]
+    return X, y, groups
+
+# deler i trening og test slik at hver pasient bare havner på én side
+def group_split(X, y, groups, test_size=0.25, random_state=42):
+    # én tilfeldig deling (n_splits=1), 25 % av pasientene til test
+    splitter = GroupShuffleSplit(n_splits=1, test_size=test_size, random_state=random_state)
+    # next(...) henter den ene delingen: radnumrene til trening og test
+    train_idx, test_idx = next(splitter.split(X, y, groups=groups))
+    X_train, X_test = X.iloc[train_idx], X.iloc[test_idx]
+    y_train, y_test = y.iloc[train_idx], y.iloc[test_idx]
+    # kontroll: ingen pasient i begge settene
+    overlap = set(groups.iloc[train_idx]) & set(groups.iloc[test_idx])
+    print(f"Trening: {len(X_train)} rader ({len(X_train) / len(X):.1%}), "
+          f"test: {len(X_test)} rader ({len(X_test) / len(X):.1%})")
+    print(f"Pasienter i både trening og test: {len(overlap)}")
+    return X_train, X_test, y_train, y_test
+
+NUM_COLS = ["age_at_admit", "pr_interval", "qrs_duration", "vent_rate",
+            "has_st_eleva", "has_depress", "has_twave_inver", "has_twave_abnormal",
+            "has_bbb", "has_lvh", "has_afib", "has_pacemaker",
+            "has_rhythm_disturbance", "has_normal_ecg"]
+CAT_COLS = ["sex", "race"]
+
+# lager pipeline: forbehandling + modell
+def build_pipeline(model):
+    prep = ColumnTransformer([
+        # tall: fyll hull med median, så skaler (snitt 0, std 1)
+        ("num", Pipeline([("imp", SimpleImputer(strategy="median")), ("sc", StandardScaler())]), NUM_COLS),
+        # tekst: én 0/1-kolonne per kategori, manglende blir egen kategori
+        ("kat", OneHotEncoder(handle_unknown="ignore"), CAT_COLS),
+    ])
+    return Pipeline([("prep", prep), ("modell", model)])
+
+# trener en pipeline på trening og regner R^2 og MAE på test 
+def evaluate(pipe, X_train, X_test, y_train, y_test):
+    # fit: imputer, skalering og modell lærer bare av treningsdata
+    pipe.fit(X_train, y_train)
+    # predict: bruker det som ble lært på testdata
+    y_pred = pipe.predict(X_test)
+    return r2_score(y_test, y_pred), mean_absolute_error(y_test, y_pred)
 
 
-""" en funksjon skal ha en oppgave """
+# 3: lineær regresjon av qt_interval, sammenlignet med baseline
+def task_3(df):
+    X, y, groups = prepare_regression(df)
+    X_train, X_test, y_train, y_test = group_split(X, y, groups)
+    modeller = {
+        "Lineær regresjon": LinearRegression(),
+        # baseline: gjetter alltid gjennomsnittet av y_train
+        "Baseline (snitt)": DummyRegressor(strategy="mean"),
+    }
+    print("\n___Resultat på testsettet___\n")
+    for navn, modell in modeller.items():
+        r2, mae = evaluate(build_pipeline(modell), X_train, X_test, y_train, y_test)
+        print(f"{navn:18} R² = {r2:6.3f}   MAE = {mae:5.1f} ms")
+
 
 
 # 1a: rader og unike pasienter
 def task_1a(df):
     print(f"Antall rader: {count_rows(df)}")
-    print(f"Antall unike patientene: {count_unique(df, 'pasient_id')}")
+    print(f"Antall unike patienter: {count_unique(df, 'pasient_id')}")
 
 # 1b: populasjon, utvalg og standardfeil
 def task_1b(df):
@@ -281,6 +367,8 @@ def main():
     task_1c(df)
     section("2")
     task_2(df)
+    section("3")
+    task_3(df)
 
 
 if __name__ == "__main__":
