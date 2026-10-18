@@ -12,6 +12,7 @@ from pathlib import Path
 import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
+from sklearn.metrics import accuracy_score
 
 
 
@@ -115,23 +116,51 @@ def run_samples(values, sizes, xlabel=None):
         # Histogram med 25 søyler
         plot_histogram(sample, f"Utvalg n = {n}", bins=25, xlabel=xlabel)
 
+"""DEl 1c"""
+
+# teller hvor mange verdier av 0 og 1
+def class_balance(values):
+    # teller hvor mange ganger hver verdi står i kolonnen
+    counts = values.value_counts()
+    # samme telling men delt på totalen - 
+    shares = values.value_counts(normalize=True)
+    totalt = len(values)
+    print(f"\n___Fordeling av {values.name}___\n")
+    # går gjennom hver verdi (0 og 1) og skriver ut antall og andel på samme linje
+    for verdi in counts.index:
+        print(f"{values.name} = {verdi}: {counts[verdi]} av {totalt} ({shares[verdi]:.2%})")
+    return counts, shares
+
+def baseline_accuracy(values, guess=0):
+    # lager modellens gjetting (prediksjon) for hver rad - samme svar alltid (0=nei)
+    predictions = [guess] * len(values)
+    # sammenligner fasit (values) med gjetningene og regner ut andelen riktige 
+    return accuracy_score(values, predictions)
+
 
 def main():
     df = load_file(FILEPATH)
-
+    
     print(f"Number of rows: {count_rows(df)}")
     print(f"Number of unique patients: {count_unique(df, 'pasient_id')}")
     check_column(df, "age_at_admit")
     ages = get_column(df, "age_at_admit")
     describe_population(ages, xlabel="alder ved innleggelse (år)")
     run_samples(ages, [30, 1000], xlabel="alder ved innleggelse (år)")
+    print()
+    print(32* "*","\n")
+    check_column(df, "ami_3d")
+    ami = get_column(df, "ami_3d")
+    counts, shares = class_balance(ami)
+    navn = {0: "nei", 1: "ja"}
+    guess=0
+    print(f"Accuracy {navn[guess]}: {counts.get(guess, 0)} av {len(ami)} riktige " f"({baseline_accuracy(ami, guess=guess):.2%})")
     
 
 
 if __name__ == "__main__":
     main()
     
-
 
 
 
