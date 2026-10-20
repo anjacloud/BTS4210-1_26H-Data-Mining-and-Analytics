@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Jeg diskuterte en del med en AI-model hvordan man løser denne oppgaven på best mulig måte 
-uten å miste hode og for å lærer mer hvordan en funksjon bare skal ha en oppgave
+Jeg diskuterte en del med en AI-modell hvordan man løser denne oppgaven på best mulig måte 
+uten å miste hodet og for å lære mer hvordan en funksjon bare skal ha en oppgave
 
 @author: 
     studentnummer: 289412
@@ -33,6 +33,7 @@ from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier
 from sklearn.dummy import DummyClassifier
 
 
+""" Viktig: kjør fila fra mappa der den ligger (csv-filen må ligge i samme mappe)"""
 
 FILEPATH = "hjerte_ekg_data.csv"
 
@@ -89,7 +90,14 @@ def section(title):
     print(f"\n{32 * '*'}  {title}  {32 * '*'}\n")
 
     
-""" DEL 1a """
+""" DEL 1a 
+
+Antall rader (= antall opphold på akuttmottaket): 43343
+Antall unike pasienter (hver pasient_id telt én gang): 30837
+Tallene er ulike fordi noen pasienter kom tilbake flere ganger, og derfor står de mer enn én gang i datasettet.
+
+"""
+
 
 # tell rader 
 def count_rows(df):
@@ -105,7 +113,19 @@ def count_unique(df, column):
     return len(unique_values) 
 
 
-""" DEL 1b """
+""" DEL 1b 
+
+Med n = 30 fikk jeg et utvalgsgjennomsnitt på 45,30 år, et standardavvik på 17,29 år og en
+standardfeil på 3,16 år. Med n = 1000 fikk jeg et utvalgsgjennomsnitt på 49,37 år, et
+standardavvik på 16,43 år og en standardfeil på 0,52 år. Populasjonens gjennomsnitt er 49,86 år.
+
+Standardfeilen blir mindre når utvalget øker fra 30 til 1000. Standardfeilen sier hvor mye
+utvalgsgjennomsnittet kan forventes å avvike fra det sanne gjennomsnittet i populasjonen. Med
+bare 30 rader kan noen få tilfeldig unge eller gamle pasienter trekke gjennomsnittet mye i én
+retning. Med 1000 rader jevner slike tilfeldige høye og lave verdier hverandre ut, og
+gjennomsnittet blir mer stabilt og pålitelig.
+
+"""
     
 # beskriver hele populasjonen
 def describe_population(values,xlabel=None):
@@ -148,7 +168,26 @@ def run_samples(values, sizes, xlabel=None):
         plot_histogram(sample, f"Utvalg n = {n}", bins=25, xlabel=xlabel)
 
 
-""" DEL 1c """
+""" DEL 1c 
+
+Av 43 343 opphold endte 1898 med ami_3d = 1. Det er en andel på 4,38 %. 
+En modell som alltid gjetter «nei» har rett på alle opphold uten hjerteinfarkt 
+og får derfor en accuracy på 95,62 % (= 100 % − 4,38 %). 
+Likevel er recall 0 %: den finner ikke et eneste hjerteinfarkt. 
+Accuracy er altså høy fordi den vanligste klassen dominerer, ikke fordi modellen har lært noe.
+Akkurat derfor skal man ikke bruke accuracy alene. Det gir ikke de svarene vi er ute etter.
+
+Hva vi trenger i tillegg:
+* Forvirringsmatrise, som viser alle fire utfallene (sanne/falske positive og negative), 
+slik at vi ser hvilke feil modellen gjør.
+* Recall (sensitivitet): andelen av de faktiske infarktene modellen finner. 
+Denne er viktigst klinisk, fordi en oversett pasient med hjerteinfarkt (falsk negativ) er mye alvorligere enn en falsk alarm.
+* Precision: andelen av «ja»-svarene som er riktige. 
+Den viser hvor mange unødvendige utredninger modellen fører til.
+* F1: harmonisk gjennomsnitt av precision og recall. 
+Den blir bare høy når begge er høye, og kan derfor ikke «jukses» ved å gjette alltid ja eller alltid nei.
+
+"""
 
 # teller hvor mange verdier av 0 og 1
 def class_balance(values):
@@ -169,7 +208,24 @@ def baseline_accuracy(values, guess=0):
     # sammenligner fasit (values) med gjetningene og regner ut andelen riktige 
     return accuracy_score(values, predictions)
 
-""" DEL 2 """
+""" DEL 2 
+
+Selv om alderen ikke er normalfordelt, er gruppene så store (1898 og 41 445) at gjennomsnittet likevel blir tilnærmet normalfordelt. 
+Det kalles sentralgrenseteoremet. Derfor kan jeg bruke en t-test. 
+Jeg valgte ikke vanlig Student t-test, fordi den antar at spredningen i alder er lik i begge gruppene. 
+Når den ene gruppen er over 20 ganger så stor som den andre, blir den samlede spredningen nesten bare bestemt av den store gruppen.  
+Welch t-test regner spredningen i hver gruppe for seg, og fungerer både når spredningen er lik og når den er ulik.  
+Oppgaven spør om gjennomsnittsalderen, og Cohens d bygger også på gjennomsnitt og standardavvik.
+
+H₀: Gjennomsnittsalderen er lik for opphold med ami_3d = 1 og ami_3d = 0.
+Hₐ: Gjennomsnittsalderen er forskjellig mellom de to gruppene (tosidig).
+
+p = 1.47e-253 < 0,05, så H₀ blir forkastet. De med hjerteinfarkt er i snitt ca. 11 år eldre,
+og Cohens d = 0,68 betyr en middels effekt.
+
+"""
+
+
 LABELS = ("ami_3d = 1", "ami_3d = 0")
 
 # deler en tallkolonne i to grupper etter en 0/1-kolonne
@@ -225,11 +281,23 @@ def cohens_d(a, b):
     return (b.mean() - a.mean()) / s_pooled
 
 """ 
-Oppgave 3 og 4: koden er skrevet med AI-hjelp, 
-delvis bygd på lærerens kode
+Oppgave 3 og 4: koden er skrevet med AI-hjelp 
+og delvis bygd på lærerens kode
 """
 
-""" DEL 3 """
+""" DEL 3 
+
+Modellen predikerer QT-tid ut fra alder, kjønn og EKG-målinger.
+Modellen bommer i snitt med ca 18 millisekunder. Modellen forklarer
+omtrent to tredjedeler av forskjellene i QT-tid mellom pasientene.
+Resultat på testsettet (pasienter modellen ikke har sett før):
+    Lineær regresjon:  R^2 = 0,67   MAE = 18,1 ms
+    Baseline (snitt):  R^2 = 0,00   MAE = 33,0 ms
+
+Baseline - en enkel gjetning der alle får gjennomsnittet.
+Modellen bommer med 14,9 ms mindre enn baseline, så den har lært noe.
+
+"""
 
 TARGET = "qt_interval"
 
@@ -329,6 +397,14 @@ SCORING = {
 }
 
 METRIC = "AUPRC"
+
+"""DEL 4b
+Bare 4 av 100 har hjerteinfarkt.
+Nøyaktighet: alle får 96 %, også en modell som alltid sier «nei». Den sier derfor ingenting.
+AUPRC er best fordi den ser på hvor godt modellen finner de få syke, uansett grense.
+Logistisk regresjon får høyest AUPRC (0,147), mens det å gjette gir 0,043. Gradient boosting er nesten like god (0,145).
+
+"""
 
 # lager 5 x 5 delinger: 5 folds, gjentatt 5 ganger med ny stokking
 # gruppert: samme pasient aldri i både trening og validering
@@ -519,6 +595,7 @@ def task_4d(model, navn, threshold, X_train, X_test, y_train, y_test):
     print(f"AUROC: {roc_auc_score(y_test, proba):.3f}   AUPRC: {average_precision_score(y_test, proba):.3f}")
 
     fig, ax = plt.subplots(1, 3, figsize=(15, 4.5))
+    # fargen viser antallet i ruta (mørk = få, gul = mange), standard fargeskala 
     ConfusionMatrixDisplay.from_predictions(y_test, pred, ax=ax[0], colorbar=False)
     ax[0].set_title(f"Forvirringsmatrise (terskel {threshold:.3f})")
     ax[0].set_xlabel("predikert ami_3d")
