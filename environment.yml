@@ -20,3 +20,5 @@ dependencies:
   - spyder
   - jupyterlab
   - openpyxl
+  - altair          # LEO's Vega-Altair notebooks, samling 3 (laerer/samling-03/)
+  - vega_datasets   # sample data those notebooks import (cars, stocks, barley)
