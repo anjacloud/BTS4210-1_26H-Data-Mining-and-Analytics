@@ -22,3 +22,8 @@ dependencies:
   - openpyxl
   - altair          # LEO's Vega-Altair notebooks, samling 3 (laerer/samling-03/)
   - vega_datasets   # sample data those notebooks import (cars, stocks, barley)
+  - pip
+  - pip:
+      # pip, not conda: conda's tensorflow downgrades pillow/libjpeg and
+      # swaps the Qt builds Spyder runs on (dry-run 2026-10-28). Oblig#2.
+      - tensorflow==2.21.0

@@ -249,3 +249,8 @@ solhoyde.txt
 # en .pptx committet stille hvis den kopieres inn ved et uhell.
 # Vaulten: ~/Documents/Master_brain/03_courses/2026-H/BTS4210-1_26H-…/
 *.pptx
+
+# Datasett fra Oblig#2 (MedMNIST-format). eurosat.npz er 61 MB og
+# bloodmnist_64.npz 156 MB — GitHub advarer over 50 MB og avviser over 100 MB.
+# Oppgaveteksten s. 5: «Ikke legg ved datasettene». Kilden er Canvas, ikke git.
+*.npz
